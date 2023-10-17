@@ -1,24 +1,27 @@
 const express = require('express')
-const mysql = require('mysql')
+const dotenv = require('dotenv')
+dotenv.config();
 
 const app = express();
 const port = 3000;
 app.use(express.json());
 
+const mysql = require('mysql')
+
 // mysql connection
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: '2tsneaker',
+const DB = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
 })
 
-connection.connect((err) => {
+DB.connect((err) => {
     if (err) {
         console.log('Error connecting to sqlite database')
         return;
     }
-    console.log('Connecting to sqlite database');
+    console.log('Connecting to sql database');
 })
 
 // create routes
@@ -26,7 +29,7 @@ app.post('/create', async (req, res) => {
     const { Username , Password, Email, tel } = req.body;
 
     try {
-        connection.query(
+        DB.query(
             "insert into members (username, password, email, tel) values(? , ?, ?, ?)",
             [Username , Password, Email, tel],
             (err, result, fields) => {
@@ -46,7 +49,7 @@ app.post('/create', async (req, res) => {
 // read
 app.get('/read', async (req, res) => {
     try {
-        connection.query(
+        DB.query(
             "select * from members",
             (err, result, fields) => {
                 if (err) {
@@ -64,7 +67,7 @@ app.get('/read', async (req, res) => {
 app.get('/read/single/:id', async (req, res) => {
     const UserID = req.params.id;
     try {
-        connection.query(
+        DB.query(
             "select * from members where UserID = ?",
             [UserID],
             (err, result, fields) => {
@@ -85,7 +88,7 @@ app.patch("/update/:UserID", async (req, res) => {
     const UserID = req.params.UserID;
     const newPassword = req.body.password;
     try {
-        connection.query(
+        DB.query(
             "update members set Password = ? where UserID = ?",
             [newPassword,UserID],
             (err, result, fields) => {
@@ -106,7 +109,7 @@ app.delete("/delete/:UserID", async (req, res) => {
     const UserID = req.params.UserID;
 
     try {
-        connection.query(
+        DB.query(
             "delete from members where UserID = ? ",
             [UserID],
             (err, result, fields) => {
