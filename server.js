@@ -30,11 +30,12 @@ DB.connect((err) => {
 // ------------------------------------------------------------------------------------------------
 // create routes
 
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
     const { Username , Password, Email, tel } = req.body;
+
     try {
         DB.query(
-            "insert into members (username, password email, tel) values(? , ?, ?, ?)",
+            "insert into members (username, password, email, tel) values(? , ?, ?, ?)",
             [Username , Password, Email, tel],
             (err, result, fields) => {
                 if (err) {
