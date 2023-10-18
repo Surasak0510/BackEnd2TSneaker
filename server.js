@@ -24,13 +24,17 @@ DB.connect((err) => {
     console.log('Connecting to sql database');
 })
 
-// create routes
-app.post('/create', async (req, res) => {
-    const { Username , Password, Email, tel } = req.body;
 
+// ------------------------------------------------------------------------------------------------
+//                                            Login / Register
+// ------------------------------------------------------------------------------------------------
+// create routes
+
+app.post('/register', (req, res) => {
+    const { Username , Password, Email, tel } = req.body;
     try {
         DB.query(
-            "insert into members (username, password, email, tel) values(? , ?, ?, ?)",
+            "insert into members (username, password email, tel) values(? , ?, ?, ?)",
             [Username , Password, Email, tel],
             (err, result, fields) => {
                 if (err) {
