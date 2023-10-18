@@ -25,9 +25,12 @@ DB.connect((err) => {
     console.log('Connecting to sql database');
 })
 
-app.use(cors({
-    origin: '*', // หรือ '*' หากคุณต้องการอนุญาตให้ทุกโดเมนเข้าถึง
-  }));
+const corsOptions = {
+    origin: 'https://2tsneaker.vercel.app/',
+    credentials: true,
+  };
+  
+app.use(cors(corsOptions));
 
 
 // ------------------------------------------------------------------------------------------------
@@ -75,7 +78,7 @@ app.get('/login', async (req, res) => {
             "select * from members where email = ? and password = ?",
             [email, password],
             (err, result, fields) => {
-                console.log(result[0].Email, result[0].Password)
+                // console.log(result[0].Email, result[0].Password)
                 if (result[0].Email != email || result[0].Password != password) {
                     return res.status(400).json({ message: "result not match" });
                 }
