@@ -77,7 +77,6 @@ app.get('/login', async (req, res) => {
             "select * from members where email = ? and password = ?",
             [email, password],
             (err, result, fields) => {
-                console.log(result[0].Email);
                 if (result[0].Email != email || result[0].Password != password) {
                     return res.status(400).json({ message: "result not match" });
                 }
