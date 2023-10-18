@@ -42,6 +42,16 @@ app.post('/register', async (req, res) => {
 
     try {
         DB.query(
+            "select email from members",
+            (err, result, fields) => {
+                result.forEach(e => {
+                    if (e.email == req.body.Email) {
+                        return res.status(401).json({ message: "อีเมลล์นี้ถูกใช้ไปแล้ว"})
+                    }
+                });
+            }
+        )
+        DB.query(
             "insert into members (username, password, email, tel) values(? , ?, ?, ?)",
             [Username , Password, Email, tel],
             (err, result, fields) => {
@@ -52,6 +62,29 @@ app.post('/register', async (req, res) => {
                 return res.status(201).json({ message: "New User successfully created!"})
             }
         )
+    } catch (error) {
+        console.log(err);
+        return res.status(500).send();
+    }
+
+})
+
+app.get('/login', async (req, res) => {
+    const { email, password} = req.body;
+
+    try {
+        DB.query(
+            "select * from members where email = ? and password = ?",
+            [email, password],
+            (err, result, fields) => {
+                console.log(result[0].Email);
+                if (result[0].Email != email || result[0].Password != password) {
+                    return res.status(400).json({ message: "result not match" });
+                }
+                return res.status(200).json({ message: "result match" });
+            }
+        )
+        
     } catch (error) {
         console.log(err);
         return res.status(500).send();
