@@ -24,6 +24,14 @@ DB.connect((err) => {
     console.log('Connecting to sql database');
 })
 
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "https://2tsneaker.vercel.app");
+    res.header("Access-Control-Allow-Origin", "localhost:3000");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    next();
+  });  
+
 
 // ------------------------------------------------------------------------------------------------
 //                                            Login / Register
