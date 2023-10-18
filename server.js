@@ -26,7 +26,7 @@ DB.connect((err) => {
 })
 
 const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: 'https://2tsneaker.vercel.app/',
     credentials: true,
   };
   
@@ -70,28 +70,48 @@ app.post('/register', async (req, res) => {
 
 })
 
-app.get('/login', async (req, res) => {
-    const { email, password} = req.body;
+app.post('/login', async (req, res) => {
+    const { Email, Password } = req.body;
 
+    if (!Email || !Password) {
+        return res.status(400).json({ message: "Email and Password are required" });
+    }
+
+    // ตรวจสอบรหัสผ่านที่เข้ารหัสเรียบร้อยแล้ว
+    // และเชื่อมต่อฐานข้อมูลเพื่อตรวจสอบข้อมูลผู้ใช้
     try {
+        // ตรวจสอบรหัสผ่านในฐานข้อมูล
         DB.query(
-            "select * from members where email = ? and password = ?",
-            [email, password],
+            "SELECT * FROM members WHERE Email = ?",
+            [Email],
             (err, result, fields) => {
-                // console.log(result[0].Email, result[0].Password)
-                // console.log(email, password)
-                if (result[0].Email != email || result[0].Password != password) {
-                    return res.status(400).json({ message: "result not match" });
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send();
                 }
-                return res.status(200).json(result[0]);
+
+                if (result.length === 0) {
+                    return res.status(400).json({ message: "User not found" });
+                }
+
+                const user = result[0];
+
+                // ตรวจสอบรหัสผ่าน
+                // ในกรณีนี้คุณควรใช้การเข้ารหัสและตรวจสอบรหัสผ่านที่ถูกเข้ารหัส
+                // เช่นโมดูล bcrypt
+                if (user.Password === Password) {
+                    return res.status(200).json({ message: "Login successful" });
+                } else {
+                    return res.status(400).json({ message: "Password incorrect" });
+                }
             }
-        )
-        
+        );
     } catch (error) {
         console.log(err);
         return res.status(500).send();
     }
-})
+});
+
 
 // read
 app.get('/read', async (req, res) => {
