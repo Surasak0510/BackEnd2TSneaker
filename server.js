@@ -68,14 +68,14 @@ app.post('/register', async (req, res) => {
 })
 
 app.get('/login', async (req, res) => {
-    const { email, password} = req.body;
+    const { Email, Password} = req.body;
 
     try {
         DB.query(
-            "select * from members where email = ? and password = ?",
-            [email, password],
+            "select * from members where Email = ? and Password = ?",
+            [Email, Password],
             (err, result, fields) => {
-                if (result[0].Email != email || result[0].Password != password) {
+                if (result[0].Email != Email || result[0].Password != Password) {
                     return res.status(400).json({ message: "result not match" });
                 }
                 return res.status(200).json({ message: "result match" });
