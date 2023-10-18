@@ -26,7 +26,7 @@ DB.connect((err) => {
 })
 
 const corsOptions = {
-    origin: 'https://2tsneaker.vercel.app/',
+    origin: 'http://localhost:3000',
     credentials: true,
   };
   
@@ -79,10 +79,11 @@ app.get('/login', async (req, res) => {
             [email, password],
             (err, result, fields) => {
                 // console.log(result[0].Email, result[0].Password)
+                // console.log(email, password)
                 if (result[0].Email != email || result[0].Password != password) {
                     return res.status(400).json({ message: "result not match" });
                 }
-                return res.status(200).json({ message: "result match" });
+                return res.status(200).json(result[0]);
             }
         )
         
