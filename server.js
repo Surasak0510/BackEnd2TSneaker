@@ -27,8 +27,8 @@ DB.connect((err) => {
 })
 
 app.use((req, res, next) => {
-    // res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-    res.header("Access-Control-Allow-Origin", "https://2tsneaker.vercel.app");
+    res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+    // res.header("Access-Control-Allow-Origin", "https://2tsneaker.vercel.app");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
     next();
@@ -240,6 +240,26 @@ app.get('/product/all', async (req, res) => {
     }
 })
 
+app.get('/product/size', async (req, res) => {
+    const name = req.body.name;
+    try {
+        DB.query(
+            "select size from products where name = ?",
+            [name],
+            (err, result, fields) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                return res.status(200).json(result);
+            }
+        )
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send();
+    }
+})
+
 app.get('/product/:type', async (req, res) => {
     const type = req.params.type;
     try {
@@ -301,25 +321,6 @@ app.patch('/product/update', async (req, res) => {
     }
 })
 
-app.get('/product/size', async (req, res) => {
-    const name = req.query.name;
-    try {
-        DB.query(
-            "SELECT size FROM products WHERE name = ?",
-            [name],
-            (err, result, fields) => {
-              if (err) {
-                console.log(err);
-                return res.status(400).send();
-              }
-              return res.status(200).json(result);
-            }
-          );          
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send();
-    }
-})
 
 
 app.listen(port , () => {
