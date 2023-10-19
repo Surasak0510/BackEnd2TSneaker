@@ -50,17 +50,17 @@ app.post('/register', async (req, res) => {
                         return res.status(400).json({ message: "have this email already"})
                     }
                 });
-            }
-        )
-        DB.query(
-            "insert into members (username, password, email, tel) values(? , ?, ?, ?)",
-            [Username , Password, Email, tel],
-            (err, result, fields) => {
-                if (err) {
-                    console.log("Error while inserting a members into the database");
-                    return res.status(400).send();
-                }
-                return res.status(201).json({ message: "New User successfully created!"})
+                DB.query(
+                    "insert into members (username, password, email, tel) values(? , ?, ?, ?)",
+                    [Username , Password, Email, tel],
+                    (err, result, fields) => {
+                        if (err) {
+                            console.log("Error while inserting a members into the database");
+                            return res.status(400).send();
+                        }
+                        return res.status(201).json({ message: "New User successfully created!"})
+                    }
+                )
             }
         )
     } catch (error) {
