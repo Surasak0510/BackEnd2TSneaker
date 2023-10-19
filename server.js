@@ -47,7 +47,7 @@ app.post('/register', async (req, res) => {
             (err, result, fields) => {
                 result.forEach(e => {
                     if (e.email == req.body.Email) {
-                        return res.status(401).json({ message: "อีเมลล์นี้ถูกใช้ไปแล้ว"})
+                        return res.status(400).json({ message: "อีเมลล์นี้ถูกใช้ไปแล้ว"})
                     }
                 });
             }
