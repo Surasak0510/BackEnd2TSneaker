@@ -132,7 +132,7 @@ app.get('/read', async (req, res) => {
 })
 
 app.get('/read/single', async (req, res) => {
-    const {Email} = req.body;
+    const { Email } = req.body;
     try {
         DB.query(
             "select * from members where Email = ?",
