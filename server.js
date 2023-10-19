@@ -14,6 +14,8 @@ const DB = mysql.createConnection({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
+    connectionLimit: 10,
+    timeout: 60000,
 })
 
 DB.connect((err) => {
