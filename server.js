@@ -280,6 +280,26 @@ app.get('/product/:type', async (req, res) => {
     }
 })
 
+app.get('/product/id', async (req, res) => {
+    const type = req.params.type;
+    try {
+        DB.query(
+            "select * from products where Pro_id = ?",
+            [type],
+            (err, result, fields) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                return res.status(200).json(result);
+            }
+        )
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send();
+    }
+})
+
 app.delete('/product/delete', async (req, res) => {
     const {id} = req.body;
     try {
