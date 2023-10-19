@@ -281,7 +281,7 @@ app.get('/product/:type', async (req, res) => {
 })
 
 app.get('/product/id', async (req, res) => {
-    const Pro_id = req.params.Pro_id;
+    const Pro_id = req.body.Pro_id;
     try {
         DB.query(
             "select * from products where Pro_id = ?",
