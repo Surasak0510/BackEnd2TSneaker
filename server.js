@@ -200,20 +200,125 @@ app.delete("/delete/:UserID", async (req, res) => {
 //                          Product
 // --------------------------------------------------------------------
 
-// app.post('/product', async (req, res) => {
-//     const { name , color , size , brand , types , amount , image , price} = req.body;
+app.post('/product', async (req, res) => {
+    const { name , color , size , brand , types , amount , image , price} = req.body;
 
-//     try {
-//         DB.query("insert into products (name , color , size , brand , types , amount , image , price) values(? , ? , ? , ? , ? , ? , ? , ?)",
-//         [name, color, size , brand , types , amount , image , price],
-//         (err, result , fields) => {
-//             console.log(err);
-//             return res.status(400).send();
-//         }
-//     } catch (error) {
-        
-//     }
-// })
+    try {
+        DB.query(
+            "insert into products (name , color , size , brand , types , amount , image , price) values(? , ? , ? , ? , ? , ? , ? , ?)",
+            [name, color, size , brand , types , amount , image , price],
+            (err, result , fields) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                return res.status(201).json({ message: "New Product successfully created!"})
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send();
+    }
+})
+
+app.get('/product/all', async (req, res) => {
+    try {
+        DB.query(
+            "select * from products",
+            (err, result, fields) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                return res.status(200).json(result);
+            }
+        )
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send();
+    }
+})
+
+app.get('/product/:type', async (req, res) => {
+    const type = req.params.type;
+    try {
+        DB.query(
+            "select * from products where types = ?",
+            [type],
+            (err, result, fields) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                return res.status(200).json(result);
+            }
+        )
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send();
+    }
+})
+
+app.delete('/product/delete', async (req, res) => {
+    const {id} = req.body;
+    try {
+        DB.query(
+            "delete from products where Pro_id = ?",
+            [id],
+            (err, result, fields) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                res.status(200).json({ message: "Delete successfully!"});
+            }
+            
+        )
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send();
+    }
+})
+
+app.patch('/product/update', async (req, res) => {
+    const {id , amount} = req.body;
+    try {
+        DB.query(
+            "update products set amount = ? where Pro_id = ?",
+            [amount , id],
+            (err , result, fields) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                res.status(200).json({ message: "Update successfully!"});
+            }
+        )
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send();
+    }
+})
+
+app.get('/product/size', async (req, res) => {
+    const name = req.query.name;
+    try {
+        DB.query(
+            "SELECT size FROM products WHERE name = ?",
+            [name],
+            (err, result, fields) => {
+              if (err) {
+                console.log(err);
+                return res.status(400).send();
+              }
+              return res.status(200).json(result);
+            }
+          );          
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send();
+    }
+})
+
 
 app.listen(port , () => {
     console.log('server listening on port '+port);
