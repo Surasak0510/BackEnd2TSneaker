@@ -25,8 +25,8 @@ DB.connect((err) => {
 })
 
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-    // res.header("Access-Control-Allow-Origin", "https://2tsneaker.vercel.app");
+    // res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.header("Access-Control-Allow-Origin", "https://2tsneaker.vercel.app");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
     next();
@@ -194,6 +194,26 @@ app.delete("/delete/:UserID", async (req, res) => {
         return res.status(500).send();
     }
 })
+
+
+// --------------------------------------------------------------------
+//                          Product
+// --------------------------------------------------------------------
+
+// app.post('/product', async (req, res) => {
+//     const { name , color , size , brand , types , amount , image , price} = req.body;
+
+//     try {
+//         DB.query("insert into products (name , color , size , brand , types , amount , image , price) values(? , ? , ? , ? , ? , ? , ? , ?)",
+//         [name, color, size , brand , types , amount , image , price],
+//         (err, result , fields) => {
+//             console.log(err);
+//             return res.status(400).send();
+//         }
+//     } catch (error) {
+        
+//     }
+// })
 
 app.listen(port , () => {
     console.log('server listening on port '+port);

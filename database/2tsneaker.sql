@@ -75,6 +75,7 @@ CREATE TABLE `payments` (
 CREATE TABLE `products` (
   `Pro_id` int(6) NOT NULL COMMENT 'รหัสสินค้า',
   `name` varchar(50) NOT NULL COMMENT 'ชื่อสินค้า',
+  `price` int(7) DEFAULT 0 COMMENT 'ราคาสินค้า',
   `color` varchar(10) NOT NULL COMMENT 'สี',
   `size` varchar(10) NOT NULL COMMENT 'ขนาด',
   `brand` varchar(20) NOT NULL COMMENT 'แบรนด์',
