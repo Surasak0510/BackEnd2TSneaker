@@ -131,12 +131,12 @@ app.get('/read', async (req, res) => {
     }
 })
 
-app.get('/read/single/:email', async (req, res) => {
-    const UserID = req.params.id;
+app.get('/read/single', async (req, res) => {
+    const {email} = req.body;
     try {
         DB.query(
             "select * from members where email = ?",
-            [UserID],
+            [email],
             (err, result, fields) => {
                 if (err) {
                     console.log(err);
