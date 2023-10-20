@@ -244,7 +244,7 @@ app.get('/product/size', async (req, res) => {
     const name = req.body.name;
     try {
         DB.query(
-            "select size from products where name = ? desc",
+            "select size from products where name = ? order by size desc",
             [name],
             (err, result, fields) => {
                 if (err) {
