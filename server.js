@@ -27,8 +27,8 @@ DB.connect((err) => {
 })
 
 app.use((req, res, next) => {
-    // res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-    res.header("Access-Control-Allow-Origin", "https://2tsneaker.vercel.app");
+    res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+    // res.header("Access-Control-Allow-Origin", "https://2tsneaker.vercel.app");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
     next();
@@ -266,26 +266,6 @@ app.get('/product/:type', async (req, res) => {
         DB.query(
             "select * from products where types = ?",
             [type],
-            (err, result, fields) => {
-                if (err) {
-                    console.log(err);
-                    return res.status(400).send();
-                }
-                return res.status(200).json(result);
-            }
-        )
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send();
-    }
-})
-
-app.get('/product/id', async (req, res) => {
-    const Pro_id = req.body.Pro_id;
-    try {
-        DB.query(
-            "select * from products where Pro_id = ?",
-            [Pro_id],
             (err, result, fields) => {
                 if (err) {
                     console.log(err);
