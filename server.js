@@ -222,6 +222,27 @@ app.post('/product', async (req, res) => {
     }
 })
 
+app.post('/product/favorites', async (req, res) => {
+    const { UserID , name , status} = req.body;
+
+    try {
+        DB.query(
+            "insert into favorites ( UserID , name , status) values(? , ? , ?)",
+            [UserID , name , status],
+            (err, result, fields) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                return res.status(201).json({ message: "Add new favorite successfully!"})
+            }
+        )
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send();
+    }
+})
+
 app.get('/product/all', async (req, res) => {
     try {
         DB.query(
@@ -320,6 +341,7 @@ app.patch('/product/update', async (req, res) => {
         return res.status(500).send();
     }
 })
+
 
 
 

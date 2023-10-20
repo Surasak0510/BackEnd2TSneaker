@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: bppul6mjxzb4j3qoj6g3-mysql.services.clever-cloud.com:3306
--- Generation Time: Oct 20, 2023 at 07:19 AM
+-- Generation Time: Oct 20, 2023 at 07:31 AM
 -- Server version: 8.0.22-13
 -- PHP Version: 8.2.11
 
@@ -24,13 +24,14 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `favorite`
+-- Table structure for table `favorites`
 --
 
-CREATE TABLE `favorite` (
+CREATE TABLE `favorites` (
   `fa_id` int NOT NULL,
-  `Pro_id` int NOT NULL,
-  `UserID` int NOT NULL
+  `UserID` int NOT NULL,
+  `Name` varchar(255) DEFAULT NULL,
+  `status` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -138,12 +139,11 @@ CREATE TABLE `promotions` (
 --
 
 --
--- Indexes for table `favorite`
+-- Indexes for table `favorites`
 --
-ALTER TABLE `favorite`
+ALTER TABLE `favorites`
   ADD PRIMARY KEY (`fa_id`),
-  ADD KEY `UserID` (`UserID`),
-  ADD KEY `Pro_id` (`Pro_id`);
+  ADD KEY `UserID` (`UserID`);
 
 --
 -- Indexes for table `locations`
@@ -212,11 +212,10 @@ ALTER TABLE `promotions`
 --
 
 --
--- Constraints for table `favorite`
+-- Constraints for table `favorites`
 --
-ALTER TABLE `favorite`
-  ADD CONSTRAINT `favorite_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `members` (`UserID`),
-  ADD CONSTRAINT `favorite_ibfk_2` FOREIGN KEY (`Pro_id`) REFERENCES `products` (`Pro_id`);
+ALTER TABLE `favorites`
+  ADD CONSTRAINT `favorites_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `members` (`UserID`);
 
 --
 -- Constraints for table `members`
