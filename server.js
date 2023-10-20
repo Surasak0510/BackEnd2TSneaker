@@ -222,27 +222,6 @@ app.post('/product', async (req, res) => {
     }
 })
 
-app.post('/product/favorites', async (req, res) => {
-    const { UserID , name , status} = req.body;
-
-    try {
-        DB.query(
-            "insert into favorites ( UserID , name , status) values(? , ? , ?)",
-            [UserID , name , status],
-            (err, result, fields) => {
-                if (err) {
-                    console.log(err);
-                    return res.status(400).send();
-                }
-                return res.status(201).json({ message: "Add new favorite successfully!"})
-            }
-        )
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send();
-    }
-})
-
 app.get('/product/all', async (req, res) => {
     try {
         DB.query(
@@ -334,6 +313,77 @@ app.patch('/product/update', async (req, res) => {
                     return res.status(400).send();
                 }
                 res.status(200).json({ message: "Update successfully!"});
+            }
+        )
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send();
+    }
+})
+
+
+//----------------------------------------------------------------
+//                          favorites
+//----------------------------------------------------------------
+
+app.get('/favorites'), async (req, res) => {
+    console.log("Loading favorites...")
+    const {UserID}  = req.body;
+    try {
+        DB.query(
+            "select * from favorites where UserID = ?",
+            [UserID],
+            (err, result, fields) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                return res.status(200).json(result);
+            }
+        )
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send();
+    }
+}
+
+app.post('/product/favorites', async (req, res) => {
+    const { UserID , name , status} = req.body;
+
+    try {
+        DB.query(
+            "insert into favorites ( UserID , name , status) values(? , ? , ?)",
+            [UserID , name , status],
+            (err, result, fields) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                return res.status(201).json({ message: "Add new favorite successfully!"})
+            }
+        )
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send();
+    }
+})
+
+app.delete('/product/dalete/favorites', async (req, res) => {
+    const {name} = req.body;
+
+    try {
+        DB.query(
+            "delete from favorites where name = ? ",
+            [name],
+            (err, result, fields) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                if (result.affectedRows === 0) {
+                    return res.status(404).json({ message: "No favorite that name"});
+                }
+                return res.status(201).json({ message: "Delete successfully!"})
             }
         )
     } catch (error) {
