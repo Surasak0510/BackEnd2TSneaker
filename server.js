@@ -327,11 +327,9 @@ app.patch('/product/update', async (req, res) => {
 //----------------------------------------------------------------
 
 app.get('/favorites/all', async (req, res) => {
-    const UserID = req.body.UserID;
     try {
         DB.query(
-            "select * from favorites where UserID = ?",
-            [UserID],
+            "select * from favorites",
             (err, result, fields) => {
                 if (err) {
                     console.log(err);
