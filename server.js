@@ -41,7 +41,7 @@ app.use((req, res, next) => {
 // create routes
 
 app.post('/register', async (req, res) => {
-    const { Username , Password, Email, tel } = req.body;
+    const { Username , Password, Email, tel  ,img} = req.body;
 
     try {
         DB.query(
@@ -53,8 +53,8 @@ app.post('/register', async (req, res) => {
                     }
                 });
                 DB.query(
-                    "insert into members (username, password, email, tel) values(? , ?, ?, ?)",
-                    [Username , Password, Email, tel],
+                    "insert into members (username, password, email, tel ,img) values(? , ?, ?, ?, ?)",
+                    [Username , Password, Email, tel ,img],
                     (err, result, fields) => {
                         if (err) {
                             console.log("Error while inserting a members into the database");
