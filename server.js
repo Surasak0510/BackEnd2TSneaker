@@ -326,9 +326,8 @@ app.patch('/product/update', async (req, res) => {
 //                          favorites
 //----------------------------------------------------------------
 
-app.get('/favorites'), async (req, res) => {
-    console.log("Loading favorites...")
-    const {UserID}  = req.body;
+app.get('/favorites/all', async (req, res) => {
+    const UserID = req.body.UserID;
     try {
         DB.query(
             "select * from favorites where UserID = ?",
@@ -345,7 +344,7 @@ app.get('/favorites'), async (req, res) => {
         console.log(error)
         return res.status(500).send();
     }
-}
+})
 
 app.post('/product/favorites', async (req, res) => {
     const { UserID , name , status} = req.body;
