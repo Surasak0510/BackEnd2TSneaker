@@ -84,8 +84,8 @@ app.post('/login', async (req, res) => {
     try {
         // ตรวจสอบรหัสผ่านในฐานข้อมูล
         DB.query(
-            "SELECT * FROM members WHERE Email = ?",
-            [Email],
+            "SELECT * FROM members WHERE Email = ? and Password = ?",
+            [Email , Password],
             (err, result, fields) => {
                 if (err) {
                     console.error(err);
@@ -102,7 +102,7 @@ app.post('/login', async (req, res) => {
                 // ในกรณีนี้คุณควรใช้การเข้ารหัสและตรวจสอบรหัสผ่านที่ถูกเข้ารหัส
                 // เช่นโมดูล bcrypt
                 if (user.Password === Password) {
-                    return res.status(200).json({ message: "Login successful" });
+                    return res.status(200).json(user.UserID);
                 } else {
                     return res.status(400).json({ message: "Password incorrect" });
                 }
