@@ -77,7 +77,7 @@ app.post('/login', async (req, res) => {
     const { Email, Password } = req.body;
 
     if (!Email || !Password) {
-        return res.status(200).json({ message: "Email and Password are required" });
+        return res.status(400).json({ message: "Email and Password are required" });
     }
 
     // ตรวจสอบรหัสผ่านที่เข้ารหัสเรียบร้อยแล้ว
@@ -94,7 +94,7 @@ app.post('/login', async (req, res) => {
                 }
 
                 if (result.length === 0) {
-                    return res.status(400).json({ message: "User not found" });
+                    return res.status(200).json({ message: "User not found" });
                 }
 
                 const user = result[0];
