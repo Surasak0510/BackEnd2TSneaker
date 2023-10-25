@@ -367,19 +367,19 @@ app.post('/product/favorites', async (req, res) => {
 })
 
 app.delete('/product/dalete/favorites', async (req, res) => {
-    const {name} = req.body;
+    const {fa_id} = req.body;
 
     try {
         DB.query(
-            "delete from favorites where name = ? ",
-            [name],
+            "delete from favorites where fa_id = ? ",
+            [fa_id],
             (err, result, fields) => {
                 if (err) {
                     console.log(err);
                     return res.status(400).send();
                 }
                 if (result.affectedRows === 0) {
-                    return res.status(404).json({ message: "No favorite that name"});
+                    return res.status(404).json({ message: "No favorite that fa_id"});
                 }
                 return res.status(201).json({ message: "Delete successfully!"})
             }
