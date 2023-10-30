@@ -390,7 +390,50 @@ app.delete('/product/dalete/favorites', async (req, res) => {
     }
 })
 
+//----------------------------------------------------------------
+//                             cart
+//----------------------------------------------------------------
 
+app.post('/cart', async (req, res) => {
+    const { UserID , Pro_id} = req.body;
+
+    try {
+        DB.query(
+            "insert into cart ( UserID ,Pro_id) values(? , ?)",
+            [UserID , Pro_id ],
+            (err, result, fields) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                return res.status(201).json({ message: "Add new cart successfully!"})
+            }
+        )
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send();
+    }
+})
+
+app.get('/cart/all',async (req, res) => {
+    try {
+        DB.query(
+            "select * from cart",
+            (err, result, fields) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                return res.status(200).json(result);
+            }
+        )
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send();
+    }
+})
+
+//----------------------------------------------------------------
 
 
 app.listen(port , () => {
