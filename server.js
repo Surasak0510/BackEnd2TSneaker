@@ -429,8 +429,29 @@ app.get('/cart/all',async (req, res) => {
             }
         )
     } catch (error) {
-        console.log(error)
-        return res.status(500).send();
+        console.error(error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+})
+
+app.delete('/cart/delete', async (req, res) => {
+    const {CartID} = req.body;
+
+    try {
+        DB.query(
+            "delete from cart where CartID = ?",
+            [CartID],
+            (err, result, fields) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(400).json({ error: "Failed delete" });
+                }
+                return res.status(201).json({ message: "Delete successfully!" });
+            }
+        )
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Internal server error" });
     }
 })
 
