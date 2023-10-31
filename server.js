@@ -416,9 +416,11 @@ app.post('/cart', async (req, res) => {
 })
 
 app.get('/cart/all',async (req, res) => {
+    const { UserID } = req.body;
     try {
         DB.query(
-            "select * from cart",
+            "select * from cart where UserID = ? ",
+            [UserID],
             (err, result, fields) => {
                 if (err) {
                     console.log(err);
