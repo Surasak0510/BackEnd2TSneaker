@@ -241,6 +241,26 @@ app.get('/product/all', async (req, res) => {
     }
 })
 
+app.get('/product/search', async (req, res) => {
+    const { name } = req.body; // Use req.query to get query parameters
+    try {
+        DB.query(
+            "SELECT * FROM products WHERE name LIKE ? LIMIT 1",
+            [`%${name}%`], // Use placeholders to prevent SQL injection and add '%' around the search term
+            (err, result, fields) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                return res.status(200).json(result);
+            }
+        );
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send();
+    }
+});
+
 app.get('/product/size', async (req, res) => {
     const name = req.body.name;
     try {
