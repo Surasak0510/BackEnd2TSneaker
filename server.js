@@ -395,25 +395,26 @@ app.delete('/product/dalete/favorites', async (req, res) => {
 //----------------------------------------------------------------
 
 app.post('/cart', async (req, res) => {
-    const { UserID , Pro_id} = req.body;
+    const { UserID, Pro_id, name, price, image, brand, color, amount, types, size } = req.body;
 
     try {
+        
         DB.query(
-            "insert into cart ( UserID ,Pro_id) values(? , ?)",
-            [UserID , Pro_id ],
-            (err, result, fields) => {
-                if (err) {
-                    console.log(err);
-                    return res.status(400).send();
-                }
-                return res.status(201).json({ message: "Add new cart successfully!"})
+            "INSERT INTO cart (Pro_id, UserID, name, price, image, brand, color, amount, types, size) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [Pro_id, UserID, name, price, image, brand, color, amount, types, size],
+             (err, result, fields) => {
+            if (err) {
+                console.error(err);
+                return res.status(400).json({ error: "Failed to add to cart" });
             }
-        )
+            return res.status(201).json({ message: "Added to cart successfully!" });
+        });
     } catch (error) {
-        console.log(error)
-        return res.status(500).send();
+        console.error(error);
+        return res.status(500).json({ error: "Internal server error" });
     }
-})
+});
+
 
 app.get('/cart/all',async (req, res) => {
     try {
