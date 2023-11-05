@@ -365,13 +365,34 @@ app.get('/favorites/all', async (req, res) => {
     }
 })
 
-app.post('/product/favorites', async (req, res) => {
-    const { UserID , name , status} = req.body;
+app.get('/favorites/all/User', async (req, res) => {
+    const { UserID } = req.body;
 
     try {
         DB.query(
-            "insert into favorites ( UserID , name , status) values(? , ? , ?)",
-            [UserID , name , status],
+            "SELECT P.*, F.UserID FROM products P INNER JOIN favorites F ON P.Pro_id = F.Pro_id WHERE F.UserID = ?;",
+            [UserID],
+            (err, result, fields) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                return res.status(200).json(result);
+            }
+        )
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send();
+    }
+})
+
+app.post('/product/favorites', async (req, res) => {
+    const { UserID , Pro_id} = req.body;
+
+    try {
+        DB.query(
+            "insert into favorites ( UserID , Pro_id) values(? , ? )",
+            [UserID , Pro_id],
             (err, result, fields) => {
                 if (err) {
                     console.log(err);
