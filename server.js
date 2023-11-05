@@ -368,7 +368,7 @@ app.get('/favorites/all', async (req, res) => {
 app.get('/favorites/user', async (req, res) => {
     const { UserID } = req.body;
 
-
+    console.log(UserID)
     try {
         DB.query(
             "SELECT P.*, F.UserID FROM products P INNER JOIN favorites F ON P.Pro_id = F.Pro_id WHERE F.UserID = ?;",
