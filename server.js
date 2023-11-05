@@ -417,7 +417,7 @@ app.delete('/product/dalete/favorites', async (req, res) => {
 
     try {
         DB.query(
-            "delete from favorites where fa_id = ? ",
+            "delete from favorites where Fa_id = ? ",
             [fa_id],
             (err, result, fields) => {
                 if (err) {
