@@ -135,7 +135,7 @@ app.get('/read', async (req, res) => {
 })
 
 app.get('/read/single', async (req, res) => {
-    const { UserID } = req.body;
+    const { UserID } = req.query;
     try {
         DB.query(
             "select * from members where UserID = ?",
@@ -242,7 +242,7 @@ app.get('/product/all', async (req, res) => {
 })
 
 app.get('/product/search', async (req, res) => {
-    const { name } = req.body; // Use req.query to get query parameters
+    const { name } = req.query; // Use req.query to get query parameters
     try {
         DB.query(
             "SELECT * FROM products WHERE name LIKE ? LIMIT 1",
@@ -262,7 +262,7 @@ app.get('/product/search', async (req, res) => {
 });
 
 app.get('/product/size', async (req, res) => {
-    const name = req.body.name;
+    const {name} = req.query;
     try {
         DB.query(
             "select * from products where name = ? order by size desc",
@@ -366,26 +366,30 @@ app.get('/favorites/all', async (req, res) => {
 })
 
 app.get('/favorites/user', async (req, res) => {
-    const { UserID } = req.body;
+    const { UserID } = req.query; // ใช้ req.query เพื่อรับค่า UserID จาก query parameters
 
-    console.log(UserID)
     try {
-        DB.query(
-            "SELECT P.*, F.UserID FROM products P INNER JOIN favorites F ON P.Pro_id = F.Pro_id WHERE F.UserID = ?;",
-            [UserID],
-            (err, result, fields) => {
-                if (err) {
-                    console.log(err);
-                    return res.status(400).send();
-                }
-                return res.status(200).json(result);
+        const query = `
+            SELECT P.*, F.UserID
+            FROM products P
+            INNER JOIN favorites F ON P.Pro_id = F.Pro_id
+            WHERE F.UserID = ?;
+        `;
+
+        DB.query(query, [UserID], (err, result) => {
+            if (err) {
+                console.log(err);
+                return res.status(400).send();
             }
-        )
+
+            return res.status(200).json(result);
+        });
     } catch (error) {
-        console.log(error)
+        console.log(error);
         return res.status(500).send();
     }
-})
+});
+
 
 app.post('/product/favorites', async (req, res) => {
     const { UserID , Pro_id} = req.body;
