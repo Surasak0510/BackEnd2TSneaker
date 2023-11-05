@@ -365,8 +365,9 @@ app.get('/favorites/all', async (req, res) => {
     }
 })
 
-app.get('/favorites/all/User', async (req, res) => {
+app.get('/favorites/user', async (req, res) => {
     const { UserID } = req.body;
+
 
     try {
         DB.query(
