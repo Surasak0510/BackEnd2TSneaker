@@ -370,7 +370,7 @@ app.get('/favorites/user', async (req, res) => {
 
     try {
         const query = `
-            SELECT P.*, F.UserID
+            SELECT P.*, F.*
             FROM products P
             INNER JOIN favorites F ON P.Pro_id = F.Pro_id
             WHERE F.UserID = ?;
