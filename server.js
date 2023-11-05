@@ -242,24 +242,28 @@ app.get('/product/all', async (req, res) => {
 })
 
 app.get('/product/search', async (req, res) => {
-    const { name } = req.query; // Use req.query to get query parameters
+    const { name } = req.query; // ใช้ req.query เพื่อรับ query parameters
     try {
-        DB.query(
-            "SELECT * FROM products WHERE name LIKE ? LIMIT 1",
-            [`%${name}%`], // Use placeholders to prevent SQL injection and add '%' around the search term
-            (err, result, fields) => {
-                if (err) {
-                    console.log(err);
-                    return res.status(400).send();
-                }
-                return res.status(200).json(result);
+        const query = "SELECT * FROM products WHERE name LIKE ? LIMIT 1";
+
+        DB.query(query, [`%${name}%`], (err, result) => {
+            if (err) {
+                console.log(err);
+                return res.status(500).send("Internal Server Error"); // แก้ status เป็น 500 เนื่องจากมีข้อผิดพลาดในเซิร์ฟเวอร์
             }
-        );
+
+            if (result.length === 0) {
+                return res.status(404).send("Product not found"); // แก้ status เป็น 404 เมื่อไม่พบสินค้า
+            }
+
+            return res.status(200).json(result[0]); // ส่งข้อมูลแรกที่พบกลับในรูปแบบ JSON
+        });
     } catch (error) {
         console.log(error);
-        return res.status(500).send();
+        return res.status(500).send("Internal Server Error");
     }
 });
+
 
 app.get('/product/size', async (req, res) => {
     const {name} = req.query;
