@@ -506,7 +506,66 @@ app.delete('/cart/delete', async (req, res) => {
 })
 
 //----------------------------------------------------------------
+//                             location
+//----------------------------------------------------------------
 
+app.patch('/location', async (req, res) => {
+    const { country, district, province, postcode, UserID } = req.body;
+
+    try {
+        // ก่อนอื่นตรวจสอบข้อมูลโดยใช้ UserID
+        DB.query(
+            `SELECT * FROM locations WHERE UserID = ?;`,
+            [UserID],
+            (err, result, fields) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+
+                // ถ้ามีข้อมูลที่ตรงกับ UserID
+                if (result.length > 0) {
+                    // ทำการอัปเดตข้อมูลที่มีอยู่
+                    DB.query(
+                        `UPDATE locations
+                        SET country = ?, district = ?, province = ?, postcode = ?
+                        WHERE UserID = ?;`,
+                        [country, district, province, postcode, UserID],
+                        (err, result, fields) => {
+                            if (err) {
+                                console.log(err);
+                                return res.status(400).send();
+                            }
+                            return res.status(200).json({ message: "Location updated successfully!" });
+                        }
+                    );
+                } else {
+                    // ถ้าไม่มีข้อมูล ให้สร้างข้อมูลใหม่
+                    DB.query(
+                        `INSERT INTO locations (country, district, province, postcode, UserID)
+                        VALUES (?, ?, ?, ?, ?);`,
+                        [country, district, province, postcode, UserID],
+                        (err, result, fields) => {
+                            if (err) {
+                                console.log(err);
+                                return res.status(400).send();
+                            }
+                            return res.status(201).json({ message: "New Location created successfully!" });
+                        }
+                    );
+                }
+            }
+        );
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send();
+    }
+});
+
+
+
+
+//----------------------------------------------------------------
 
 app.listen(port , () => {
     console.log('server listening on port '+port);
