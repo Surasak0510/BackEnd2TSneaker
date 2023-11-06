@@ -186,7 +186,7 @@ app.patch("/update/profile/:UserID", async (req, res) => {
                     console.log(err);
                     return res.status(400).send();
                 }
-                res.status(200).json({ message: "User Password updated successfully!"});
+                res.status(200).json({ message: "User updated successfully!"});
             })
     } catch (error) {
         console.log(error)
