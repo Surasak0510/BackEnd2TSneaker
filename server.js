@@ -174,6 +174,26 @@ app.patch("/update/:UserID", async (req, res) => {
     }
 })
 
+app.patch("/update/profile/:UserID", async (req, res) => {
+    const UserID = req.params.UserID;
+    const { Username,Email,tel } = req.body;
+    try {
+        DB.query(
+            "update members set Username = ?,Email = ?,tel = ? where UserID = ?",
+            [Username,Email,tel,UserID],
+            (err, result, fields) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(400).send();
+                }
+                res.status(200).json({ message: "User Password updated successfully!"});
+            })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send();
+    }
+})
+
 // delete
 app.delete("/delete/:UserID", async (req, res) => {
     const UserID = req.params.UserID;
