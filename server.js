@@ -562,8 +562,27 @@ app.patch('/location', async (req, res) => {
     }
 });
 
+app.get('/location/user', async (req, res) => {
+    const { UserID } = req.query; // ใช้ req.query เพื่อรับค่า UserID จาก query parameters
 
+    try {
+        const query = `
+            SELECT * FROM locations WHERE UserID = ?;
+        `;
 
+        DB.query(query, [UserID], (err, result) => {
+            if (err) {
+                console.log(err);
+                return res.status(400).send();
+            }
+
+            return res.status(200).json(result);
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send();
+    }
+});
 
 //----------------------------------------------------------------
 
