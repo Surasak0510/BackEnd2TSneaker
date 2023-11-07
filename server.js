@@ -623,6 +623,66 @@ app.get('/location/user', async (req, res) => {
 });
 
 //----------------------------------------------------------------
+//  GET /                   BuyProducts
+//----------------------------------------------------------------
+
+app.post('/buyProducts', (req, res) => {
+    const { UserID, amount, Pro_id } = req.body; // เพิ่ม Pro_id ในการดึงค่าจาก req.body
+
+    try {
+        DB.beginTransaction((err) => {
+            if (err) {
+                console.log(err);
+                return res.status(500).send();
+            }
+
+            DB.query(
+                'DELETE FROM cart WHERE UserID = ?',
+                [UserID],
+                (err, result) => {
+                    if (err) {
+                        console.log(err);
+                        DB.rollback(() => {
+                            return res.status(400).send();
+                        });
+                    } else {
+                        const values = Pro_id.map((element) => [UserID, amount, element]);
+
+                        DB.query(
+                            'INSERT INTO payments (UserID, amount, pro_id) VALUES ?',
+                            [values],
+                            (err, result) => {
+                                if (err) {
+                                    console.log(err);
+                                    DB.rollback(() => {
+                                        return res.status(400).send();
+                                    });
+                                } else {
+                                    DB.commit((err) => {
+                                        if (err) {
+                                            console.log(err);
+                                            DB.rollback(() => {
+                                                return res.status(500).send();
+                                            });
+                                        } else {
+                                            res.status(200).send();
+                                        }
+                                    });
+                                }
+                            }
+                        );
+                    }
+                }
+            );
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send();
+    }
+});
+
+
+//----------------------------------------------------------------
 
 app.listen(port , () => {
     console.log('server listening on port '+port);
