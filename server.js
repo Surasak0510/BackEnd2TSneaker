@@ -1,6 +1,7 @@
 const express = require('express')
 const dotenv = require('dotenv')
 dotenv.config();
+const bcrypt = require('bcrypt');
 
 const app = express();
 const port = 3000;
@@ -95,8 +96,6 @@ app.post('/register', registrationValidation, (req, res) => {
         });
     });
 });
-
-const bcrypt = require('bcrypt');
 
 app.post('/login', async (req, res) => {
     const { Email, Password } = req.body;
