@@ -703,6 +703,27 @@ app.get('/payments', (req, res) => {
     }
 })
 
+// ฟังก์ชันสำหรับลบข้อมูลในฐานข้อมูล
+function deleteOldData() {
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000); // 1 ชั่วโมงที่ผ่านมา
+    const sql = 'DELETE FROM payments WHERE Date < ?';
+
+    DB.query(sql, [oneHourAgo], (error, results, fields) => {
+        if (error) {
+            console.error('Error deleting data: ' + error.message);
+        } else {
+            console.log('Deleted old data.');
+        }
+    });
+}
+
+// ตั้งเวลาเริ่มต้นที่ 0 นาทีของทุกชั่วโมง
+const minutesToNextHour = 60 - new Date().getMinutes();
+setTimeout(() => {
+    deleteOldData(); // เรียกใช้ฟังก์ชันเมื่อเริ่มต้นทุกชั่วโมง
+    setInterval(deleteOldData, 60 * 60 * 1000); // จากนี้ทุก 1 ชั่วโมง
+}, minutesToNextHour * 60 * 1000); // รอเป็นเวลาจนกระทั่งเริ่มต้นในชั่วโมงถัดไป
+
 //----------------------------------------------------------------
 
 app.listen(port , () => {
