@@ -41,37 +41,62 @@ app.use((req, res, next) => {
 // ------------------------------------------------------------------------------------------------
 // create routes
 
-app.post('/register', async (req, res) => {
-    const { Username , Password, Email, tel  } = req.body;
+const { check, validationResult } = require('express-validator');
 
-    try {
-        DB.query(
-            "select email from members",
-            (err, result, fields) => {
-                result.forEach(e => {
-                    if (e.email == req.body.Email) {
-                        return res.status(400).json({ message: "have this email already"})
-                    }
-                });
-                DB.query(
-                    "insert into members (username, password, email, tel ) values(? , ?, ?, ?)",
-                    [Username , Password, Email, tel ],
-                    (err, result, fields) => {
-                        if (err) {
-                            console.log("Error while inserting a members into the database");
-                            return res.status(400).send();
-                        }
-                        return res.status(201).json({ message: "New User successfully created!"})
-                    }
-                )
-            }
-        )
-    } catch (error) {
-        console.log(err);
-        return res.status(500).send();
+// ...rest of the code...
+
+// Define validation middleware for registration
+const registrationValidation = [
+    check('Username').isLength({ min: 1 }).withMessage('Username is required'),
+    check('Email').isEmail().withMessage('Invalid email'),
+    check('Password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+    check('tel').isMobilePhone().withMessage('Invalid phone number'),
+];
+
+app.post('/register', registrationValidation, (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
     }
 
-})
+    const { Username, Password, Email, tel } = req.body;
+
+    // Hash the password before storing it
+    bcrypt.hash(Password, 10, (hashErr, hash) => {
+        if (hashErr) {
+            console.error(hashErr);
+            return res.status(500).json({ message: 'Error hashing password' });
+        }
+
+        // Check if the email already exists in the database
+        DB.query('SELECT email FROM members WHERE email = ?', [Email], (err, result) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ message: 'Database error' });
+            }
+
+            if (result.length > 0) {
+                return res.status(400).json({ message: 'Email already exists' });
+            }
+
+            // Insert the user into the database
+            DB.query(
+                'INSERT INTO members (username, password, email, tel) VALUES (?, ?, ?, ?)',
+                [Username, hash, Email, tel],
+                (insertErr) => {
+                    if (insertErr) {
+                        console.error(insertErr);
+                        return res.status(500).json({ message: 'Error creating user' });
+                    }
+                    return res.status(201).json({ message: 'User created successfully' });
+                }
+            );
+        });
+    });
+});
+
+const bcrypt = require('bcrypt');
 
 app.post('/login', async (req, res) => {
     const { Email, Password } = req.body;
@@ -80,38 +105,32 @@ app.post('/login', async (req, res) => {
         return res.status(400).json({ message: "Email and Password are required" });
     }
 
-    // ตรวจสอบรหัสผ่านที่เข้ารหัสเรียบร้อยแล้ว
-    // และเชื่อมต่อฐานข้อมูลเพื่อตรวจสอบข้อมูลผู้ใช้
     try {
-        // ตรวจสอบรหัสผ่านในฐานข้อมูล
-        DB.query(
-            "SELECT * FROM members WHERE Email = ? and Password = ?",
-            [Email , Password],
-            (err, result, fields) => {
-                if (err) {
-                    console.error(err);
-                    return res.status(500).send();
-                }
-
-                if (result.length === 0) {
-                    return res.status(400).json({ message: "User not found" });
-                }
-
-                const user = result[0];
-
-                // ตรวจสอบรหัสผ่าน
-                // ในกรณีนี้คุณควรใช้การเข้ารหัสและตรวจสอบรหัสผ่านที่ถูกเข้ารหัส
-                // เช่นโมดูล bcrypt
-                if (user.Password === Password) {
-                    return res.status(200).json(user.UserID);
-                } else {
-                    return res.status(400).json({ message: "Password incorrect" });
-                }
+        // Query the database to find the user by email
+        DB.query("SELECT * FROM members WHERE Email = ?", [Email], async (err, result, fields) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ message: "Database error" });
             }
-        );
+
+            if (result.length === 0) {
+                return res.status(400).json({ message: "User not found" });
+            }
+
+            const user = result[0];
+
+            // Compare the provided password with the hashed password stored in the database
+            const passwordMatch = await bcrypt.compare(Password, user.Password);
+
+            if (passwordMatch) {
+                return res.status(200).json({ message: "Login successful", UserID: user.UserID });
+            } else {
+                return res.status(400).json({ message: "Password incorrect" });
+            }
+        });
     } catch (error) {
-        console.log(err);
-        return res.status(500).send();
+        console.log(error);
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
