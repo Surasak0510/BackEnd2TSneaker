@@ -1,9 +1,10 @@
 const express = require('express')
+const app = express();
 const dotenv = require('dotenv')
+
 dotenv.config();
 const bcrypt = require('bcrypt');
 
-const app = express();
 const port = 3000;
 app.use(express.json());
 
@@ -35,7 +36,6 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
     next();
   });  
-
 
 // ------------------------------------------------------------------------------------------------
 //                                            Login / Register
