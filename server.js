@@ -194,11 +194,11 @@ app.patch("/update/:UserID", async (req, res) => {
 
 app.patch("/update/profile/:UserID", async (req, res) => {
     const UserID = req.params.UserID;
-    const { Username,Email,tel } = req.body;
+    const { Username,Email,tel,Status } = req.body;
     try {
         DB.query(
-            "update members set Username = ?,Email = ?,tel = ? where UserID = ?",
-            [Username,Email,tel,UserID],
+            "update members set Username = ?,Email = ?,tel = ?,Status = ? where UserID = ?",
+            [Username,Email,tel,Status ,UserID],
             (err, result, fields) => {
                 if (err) {
                     console.log(err);
