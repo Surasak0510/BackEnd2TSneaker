@@ -365,11 +365,11 @@ app.delete('/product/delete', async (req, res) => {
 })
 
 app.patch('/product/update', async (req, res) => {
-    const {id , amount} = req.body;
+    const {Pro_id ,name,color,size,brand,types,price, amount} = req.body;
     try {
         DB.query(
-            "update products set amount = ? where Pro_id = ?",
-            [amount , id],
+            "update products set amount = ?,name = ?,color = ?,size = ?,brand = ?,types = ?,price = ? where Pro_id = ?",
+            [amount ,name,color,size,brand,types,price, Pro_id],
             (err , result, fields) => {
                 if (err) {
                     console.log(err);
