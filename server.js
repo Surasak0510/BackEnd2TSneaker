@@ -52,10 +52,11 @@ io.on('connection', (socket) => {
   
     // ตรวจสอบข้อความที่ถูกส่งมาจากผู้ใช้
     socket.on('chat message', (message) => {
-      console.log(`ข้อความ: ${message}`);
+      console.log(`message: ${message}`);
       // ส่งข้อความกลับไปยังผู้ใช้ทุกคนที่เชื่อมต่อ
       io.emit('chat message', message);
     });
+
   
     // รับการตัดการเชื่อมของผู้ใช้
     socket.on('disconnect', () => {
@@ -64,7 +65,7 @@ io.on('connection', (socket) => {
   });
   
   // ตั้งค่า Express ให้ใช้ไฟล์ index.html เป็นหน้าเริ่มต้น
-app.get('/', (req, res) => {
+app.get('/Chat', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
