@@ -184,45 +184,26 @@ app.get('/read', async (req, res) => {
     }
 })
 
-app.get('/read/single', async (req, res) => {
-    const { UserID } = req.query;
-    try {
-        DB.query(
-            "select * from members where UserID = ?",
-            [UserID],
-            (err, result, fields) => {
-                if (err) {
-                    console.log(err);
-                    return res.status(400).send();
-                }
-                res.status(200).json(result);
-            })
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send();
-    }
-})
-
 // update data
-app.patch("/update/:UserID", async (req, res) => {
-    const UserID = req.params.UserID;
-    const newPassword = req.body.password;
-    try {
-        DB.query(
-            "update members set Password = ? where UserID = ?",
-            [newPassword,UserID],
-            (err, result, fields) => {
-                if (err) {
-                    console.log(err);
-                    return res.status(400).send();
-                }
-                res.status(200).json({ message: "User Password updated successfully!"});
-            })
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send();
-    }
-})
+// app.patch("/update/:UserID", async (req, res) => {
+//     const UserID = req.params.UserID;
+//     const newPassword = req.body.password;
+//     try {
+//         DB.query(
+//             "update members set Password = ? where UserID = ?",
+//             [newPassword,UserID],
+//             (err, result, fields) => {
+//                 if (err) {
+//                     console.log(err);
+//                     return res.status(400).send();
+//                 }
+//                 res.status(200).json({ message: "User Password updated successfully!"});
+//             })
+//     } catch (error) {
+//         console.log(error)
+//         return res.status(500).send();
+//     }
+// })
 
 app.patch("/update/profile/:UserID", async (req, res) => {
     const UserID = req.params.UserID;
@@ -659,15 +640,13 @@ app.get('/location/user', async (req, res) => {
 //----------------------------------------------------------------
 
 app.post('/buyProducts', (req, res) => {
-    const { UserID, amount, Pro_id } = req.body; // เพิ่ม Pro_id ในการดึงค่าจาก req.body
-
+    const { UserID, amount, Pro_id } = req.body;
     try {
         DB.beginTransaction((err) => {
             if (err) {
                 console.log(err);
                 return res.status(500).send();
             }
-
             DB.query(
                 'DELETE FROM cart WHERE UserID = ?',
                 [UserID],
@@ -679,10 +658,7 @@ app.post('/buyProducts', (req, res) => {
                         });
                     } else {
                         const values = Pro_id.map((element) => [UserID, amount, element]);
-
-                        DB.query(
-                            'INSERT INTO payments (UserID, amount, pro_id) VALUES ?',
-                            [values],
+                        DB.query('INSERT INTO payments (UserID, amount, pro_id) VALUES ?',[values],
                             (err, result) => {
                                 if (err) {
                                     console.log(err);
@@ -696,9 +672,7 @@ app.post('/buyProducts', (req, res) => {
                                             DB.rollback(() => {
                                                 return res.status(500).send();
                                             });
-                                        } else {
-                                            res.status(200).send();
-                                        }
+                                        } else { res.status(200).send(); }
                                     });
                                 }
                             }
@@ -714,8 +688,7 @@ app.post('/buyProducts', (req, res) => {
 });
 
 app.get('/payments', (req, res) => {
-    const { UserID } = req.query; // ใช้ req.query เพื่อรับค่า UserID จาก query parameters
-
+    const { UserID } = req.query; 
     try {
         const query = `
             SELECT * FROM payments WHERE UserID = ?;
