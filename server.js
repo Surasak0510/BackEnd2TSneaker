@@ -1,5 +1,11 @@
-const express = require('express')
+const express = require('express');
+const http = require('http');
+const socketIO = require('socket.io');
+
 const app = express();
+const server = http.createServer(app);
+const io = socketIO(server);
+
 const dotenv = require('dotenv')
 
 dotenv.config();
@@ -36,6 +42,31 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
     next();
   });  
+
+// ------------------------------------------------------------------------------------------------
+//                                              Server
+// ------------------------------------------------------------------------------------------------
+
+io.on('connection', (socket) => {
+    console.log('User connecting to server');
+  
+    // ตรวจสอบข้อความที่ถูกส่งมาจากผู้ใช้
+    socket.on('chat message', (message) => {
+      console.log(`ข้อความ: ${message}`);
+      // ส่งข้อความกลับไปยังผู้ใช้ทุกคนที่เชื่อมต่อ
+      io.emit('chat message', message);
+    });
+  
+    // รับการตัดการเชื่อมของผู้ใช้
+    socket.on('disconnect', () => {
+      console.log('User disconnected!');
+    });
+  });
+  
+  // ตั้งค่า Express ให้ใช้ไฟล์ index.html เป็นหน้าเริ่มต้น
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
 
 // ------------------------------------------------------------------------------------------------
 //                                            Login / Register
@@ -726,6 +757,6 @@ setTimeout(() => {
 
 //----------------------------------------------------------------
 
-app.listen(port , () => {
+server.listen(port , () => {
     console.log('server listening on port '+port);
 })
